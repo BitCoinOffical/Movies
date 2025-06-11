@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Каталог фильмов</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; }
+    h1 { text-align: center; }
+    form { margin-bottom: 20px; }
+    label { display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 10px; padding: 8px 16px; }
+    .movie { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .movie h3 { margin: 0; }
+    .movie button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Каталог фильмов</h1>
+
+  <form id="movieForm">
+    <input type="hidden" id="movieId" />
+    <label>Название:
+      <input type="text" id="title" required />
+    </label>
+    <label>Жанр:
+      <input type="text" id="genre" />
+    </label>
+    <label>Год выпуска:
+      <input type="number" id="year" />
+    </label>
+    <label>Описание:
+      <textarea id="description" rows="3"></textarea>
+    </label>
+    <button type="submit">Сохранить фильм</button>
+    <button type="button" id="cancelEdit" style="display:none;">Отмена</button>
+  </form>
+
+  <div id="moviesList"></div>
+
+  <script>
+    const apiUrl = 'http://localhost:8080/movies'; // поменяй на свой бэкенд
+
+    const movieForm = document.getElementById('movieForm');
+    const movieIdInput = document.getElementById('movieId');
+    const titleInput = document.getElementById('title');
+    const genreInput = document.getElementById('genre');
+    const yearInput = document.getElementById('year');
+    const descriptionInput = document.getElementById('description');
+    const cancelEditBtn = document.getElementById('cancelEdit');
+    const moviesList = document.getElementById('moviesList');
+
+    // Загрузка списка фильмов
+    async function loadMovies() {
+      const res = await fetch(apiUrl);
+      const movies = await res.json();
+      moviesList.innerHTML = '';
+      movies.forEach(movie => {
+        const div = document.createElement('div');
+        div.className = 'movie';
+        div.innerHTML = `
+          <h3>${movie.title} (${movie.year || ''})</h3>
+          <p><b>Жанр:</b> ${movie.genre || '-'}</p>
+          <p>${movie.description || ''}</p>
+          <button onclick="editMovie(${movie.id})">Редактировать</button>
+          <button onclick="deleteMovie(${movie.id})">Удалить</button>
+        `;
+        moviesList.appendChild(div);
+      });
+    }
+
+    // Добавление или обновление фильма
+    movieForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const movieData = {
+        title: titleInput.value,
+        genre: genreInput.value,
+        year: yearInput.value ? Number(yearInput.value) : null,
+        description: descriptionInput.value
+      };
+
+      const id = movieIdInput.value;
+      let method = 'POST';
+      let url = apiUrl;
+
+      if (id) {
+        method = 'PUT';
+        url += `/${id}`;
+      }
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(movieData)
+      });
+
+      if (res.ok) {
+        resetForm();
+        loadMovies();
+      } else {
+        alert('Ошибка при сохранении фильма');
+      }
+    });
+
+    // Редактирование фильма - заполняем форму
+    window.editMovie = async (id) => {
+      const res = await fetch(`${apiUrl}/${id}`);
+      if (!res.ok) {
+        alert('Фильм не найден');
+        return;
+      }
+      const movie = await res.json();
+      movieIdInput.value = movie.id;
+      titleInput.value = movie.title;
+      genreInput.value = movie.genre || '';
+      yearInput.value = movie.year || '';
+      descriptionInput.value = movie.description || '';
+      cancelEditBtn.style.display = 'inline-block';
+    };
+
+    cancelEditBtn.addEventListener('click', () => {
+      resetForm();
+    });
+
+    // Удаление фильма
+    window.deleteMovie = async (id) => {
+      if (!confirm('Удалить фильм?')) return;
+      const res = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        loadMovies();
+      } else {
+        alert('Ошибка при удалении фильма');
+      }
+    };
+
+    function resetForm() {
+      movieIdInput.value = '';
+      movieForm.reset();
+      cancelEditBtn.style.display = 'none';
+    }
+
+    // Начальная загрузка
+    loadMovies();
+  </script>
+
+</body>
+</html>
