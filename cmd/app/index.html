@@ -4,40 +4,318 @@
   <meta charset="UTF-8" />
   <title>Каталог фильмов</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; }
-    h1 { text-align: center; }
-    form { margin-bottom: 20px; }
-    label { display: block; margin-top: 10px; }
-    input, textarea { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
-    button { margin-top: 10px; padding: 8px 16px; }
-    .movie { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-    .movie h3 { margin: 0; }
-    .movie button { margin-right: 10px; }
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+    }
+    
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .form-container {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+    
+    .form-title::before {
+      content: "🎬";
+      margin-right: 10px;
+    }
+    
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .button-group {
+      grid-column: span 2;
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    button.primary {
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      color: white;
+    }
+    
+    button.secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    
+    button.danger {
+      background: linear-gradient(to right, var(--danger), #ff7096);
+      color: white;
+    }
+    
+    button i {
+      margin-right: 8px;
+    }
+    
+    .movies-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    
+    .movie-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .movie-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .movie-header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 15px;
+    }
+    
+    .movie-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    
+    .movie-body {
+      padding: 15px;
+    }
+    
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    
+    .movie-genre {
+      background: var(--accent);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+    
+    .movie-description {
+      margin: 15px 0;
+      color: #555;
+      font-size: 0.95rem;
+    }
+    
+    .movie-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .movie-actions button {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+    
+    .empty-state {
+      grid-column: span 2;
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    @media (max-width: 768px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-group.full-width, .button-group {
+        grid-column: span 1;
+      }
+      
+      .movies-container {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-
-  <h1>Каталог фильмов</h1>
-
-  <form id="movieForm">
-    <input type="hidden" id="movieId" />
-    <label>Название:
-      <input type="text" id="title" required />
-    </label>
-    <label>Жанр:
-      <input type="text" id="genre" />
-    </label>
-    <label>Год выпуска:
-      <input type="number" id="year" />
-    </label>
-    <label>Описание:
-      <textarea id="description" rows="3"></textarea>
-    </label>
-    <button type="submit">Сохранить фильм</button>
-    <button type="button" id="cancelEdit" style="display:none;">Отмена</button>
-  </form>
-
-  <div id="moviesList"></div>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-film"></i> Каталог фильмов</h1>
+    </header>
+    
+    <div class="content">
+      <div class="form-container">
+        <h2 class="form-title">Добавить новый фильм</h2>
+        <form id="movieForm">
+          <input type="hidden" id="movieId" />
+          <div class="form-group">
+            <label for="title"><i class="fas fa-heading"></i> Название</label>
+            <input type="text" id="title" required placeholder="Введите название фильма" />
+          </div>
+          <div class="form-group">
+            <label for="genre"><i class="fas fa-tags"></i> Жанр</label>
+            <input type="text" id="genre" placeholder="Укажите жанр" />
+          </div>
+          <div class="form-group">
+            <label for="year"><i class="fas fa-calendar-alt"></i> Год выпуска</label>
+            <input type="number" id="year" placeholder="Год выпуска" min="1900" max="2100" />
+          </div>
+          <div class="form-group full-width">
+            <label for="description"><i class="fas fa-align-left"></i> Описание</label>
+            <textarea id="description" placeholder="Краткое описание фильма"></textarea>
+          </div>
+          <div class="button-group">
+            <button type="submit" class="primary">
+              <i class="fas fa-save"></i> Сохранить фильм
+            </button>
+            <button type="button" id="cancelEdit" class="secondary hidden">
+              <i class="fas fa-times"></i> Отмена
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <div id="moviesList" class="movies-container">
+        <!-- Фильмы будут загружены здесь -->
+      </div>
+    </div>
+  </div>
 
   <script>
     const apiUrl = 'http://localhost:8080/movies'; // поменяй на свой бэкенд
@@ -53,71 +331,128 @@
 
     // Загрузка списка фильмов
     async function loadMovies() {
-      const res = await fetch(apiUrl);
-      const movies = await res.json();
-      moviesList.innerHTML = '';
-      movies.forEach(movie => {
-        const div = document.createElement('div');
-        div.className = 'movie';
-        div.innerHTML = `
-          <h3>${movie.title} (${movie.year || ''})</h3>
-          <p><b>Жанр:</b> ${movie.genre || '-'}</p>
-          <p>${movie.description || ''}</p>
-          <button onclick="editMovie(${movie.id})">Редактировать</button>
-          <button onclick="deleteMovie(${movie.id})">Удалить</button>
+      try {
+        const res = await fetch(apiUrl);
+        const movies = await res.json();
+        
+        moviesList.innerHTML = '';
+        
+        if (movies.length === 0) {
+          moviesList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-film fa-3x"></i>
+              <h3>Фильмов пока нет</h3>
+              <p>Добавьте свой первый фильм с помощью формы выше</p>
+            </div>
+          `;
+          return;
+        }
+        
+        movies.forEach(movie => {
+          const movieCard = document.createElement('div');
+          movieCard.className = 'movie-card';
+          movieCard.innerHTML = `
+            <div class="movie-header">
+              <h3>${movie.title}</h3>
+            </div>
+            <div class="movie-body">
+              <div class="movie-meta">
+                <span><i class="fas fa-calendar-alt"></i> ${movie.year || 'Не указан'}</span>
+                ${movie.genre ? `<span class="movie-genre"><i class="fas fa-tag"></i> ${movie.genre}</span>` : ''}
+              </div>
+              ${movie.description ? `<p class="movie-description">${movie.description}</p>` : ''}
+              <div class="movie-actions">
+                <button onclick="editMovie(${movie.id})" class="primary">
+                  <i class="fas fa-edit"></i> Редактировать
+                </button>
+                <button onclick="deleteMovie(${movie.id})" class="danger">
+                  <i class="fas fa-trash"></i> Удалить
+                </button>
+              </div>
+            </div>
+          `;
+          moviesList.appendChild(movieCard);
+        });
+      } catch (error) {
+        console.error('Ошибка при загрузке фильмов:', error);
+        moviesList.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle fa-3x"></i>
+            <h3>Ошибка загрузки</h3>
+            <p>Не удалось загрузить список фильмов</p>
+          </div>
         `;
-        moviesList.appendChild(div);
-      });
+      }
     }
 
     // Добавление или обновление фильма
     movieForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const movieData = {
-        title: titleInput.value,
-        genre: genreInput.value,
-        year: yearInput.value ? Number(yearInput.value) : null,
-        description: descriptionInput.value
-      };
+      try {
+        const movieData = {
+          title: titleInput.value,
+          genre: genreInput.value,
+          year: yearInput.value ? Number(yearInput.value) : null,
+          description: descriptionInput.value
+        };
 
-      const id = movieIdInput.value;
-      let method = 'POST';
-      let url = apiUrl;
+        const id = movieIdInput.value;
+        let method = 'POST';
+        let url = apiUrl;
 
-      if (id) {
-        method = 'PUT';
-        url += `/${id}`;
-      }
+        if (id) {
+          method = 'PUT';
+          url += `/${id}`;
+        }
 
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(movieData)
-      });
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(movieData)
+        });
 
-      if (res.ok) {
-        resetForm();
-        loadMovies();
-      } else {
+        if (res.ok) {
+          resetForm();
+          loadMovies();
+        } else {
+          throw new Error('Ошибка сервера');
+        }
+      } catch (error) {
+        console.error('Ошибка при сохранении фильма:', error);
         alert('Ошибка при сохранении фильма');
       }
     });
 
     // Редактирование фильма - заполняем форму
     window.editMovie = async (id) => {
-      const res = await fetch(`${apiUrl}/${id}`);
-      if (!res.ok) {
+      try {
+        const res = await fetch(`${apiUrl}/${id}`);
+        if (!res.ok) {
+          throw new Error('Фильм не найден');
+        }
+        
+        const movie = await res.json();
+        movieIdInput.value = movie.id;
+        titleInput.value = movie.title;
+        genreInput.value = movie.genre || '';
+        yearInput.value = movie.year || '';
+        descriptionInput.value = movie.description || '';
+        cancelEditBtn.classList.remove('hidden');
+        
+        // Прокрутка к форме
+        document.querySelector('.form-title').scrollIntoView({
+          behavior: 'smooth'
+        });
+        
+        // Обновление заголовка формы
+        document.querySelector('.form-title').innerHTML = `
+          <i class="fas fa-edit"></i> Редактирование фильма
+        `;
+      } catch (error) {
+        console.error('Ошибка при редактировании фильма:', error);
         alert('Фильм не найден');
-        return;
       }
-      const movie = await res.json();
-      movieIdInput.value = movie.id;
-      titleInput.value = movie.title;
-      genreInput.value = movie.genre || '';
-      yearInput.value = movie.year || '';
-      descriptionInput.value = movie.description || '';
-      cancelEditBtn.style.display = 'inline-block';
     };
 
     cancelEditBtn.addEventListener('click', () => {
@@ -126,11 +461,17 @@
 
     // Удаление фильма
     window.deleteMovie = async (id) => {
-      if (!confirm('Удалить фильм?')) return;
-      const res = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        loadMovies();
-      } else {
+      if (!confirm('Вы уверены, что хотите удалить этот фильм?')) return;
+      
+      try {
+        const res = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          loadMovies();
+        } else {
+          throw new Error('Ошибка сервера');
+        }
+      } catch (error) {
+        console.error('Ошибка при удалении фильма:', error);
         alert('Ошибка при удалении фильма');
       }
     };
@@ -138,12 +479,14 @@
     function resetForm() {
       movieIdInput.value = '';
       movieForm.reset();
-      cancelEditBtn.style.display = 'none';
+      cancelEditBtn.classList.add('hidden');
+      document.querySelector('.form-title').innerHTML = `
+        <i class="fas fa-plus-circle"></i> Добавить новый фильм
+      `;
     }
 
     // Начальная загрузка
     loadMovies();
   </script>
-
 </body>
 </html>
